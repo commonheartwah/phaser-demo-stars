@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+  <script src="./js/phaser.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="parent"></div>
+  <script>
+    //游戏界面 宽高 渲染方式 父级元素 于对象中创建方法
+    var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'parent', {
+      preload: preload,//资源加载
+      create: create,//创建场景
+      update: update//游戏循环
+    });
+    var ground;
+    var player;
+    var cursors;
+    function preload() {
+      console.log('资源加载');
+      game.load.image('star', 'assets/star.png');//图片加载 星星
+      game.load.image('sky', 'assets/sky.png');//背景
+      game.load.image('ground', 'assets/platform.png');//地板
+      game.load.spritesheet('dude', 'assets/dude.png', 32, 48);//加载精灵图 角色
+    }
+    function create() {
+      game.physics.startSystem(Phaser.ARCADE);//启动ARCADE物理引擎
+      game.add.sprite(0, 0, 'sky');
+      game.add.sprite(0, 0, 'star');
+      game.add.sprite(400, 400, 'ground');
+      game.add.sprite(-150, 250, 'ground');
+      ground = game.add.sprite(0, game.world.height - 64, 'ground');
+      game.physics.arcade.enable(ground);
+      ground.body.immovable = true;//不可移动
+      ground.scale.setTo(2, 2);
+      player = game.add.sprite(32, game.world.height - 150, 'dude');
+      game.physics.arcade.enable(player);//创建角色的物理属性
+      player.body.gravity.y = 300;//设置角色的重力
+      player.body.collideWorldBounds = true;//碰撞世界范围
+
+      //创建按键 方向
+      cursors = game.input.keyboard.createCursorKeys();
+
+    }
+    function update() {
+      game.physics.arcade.collide(player, ground);
+      if (cursors.left.isDown) {
+        player.body.velocity.x = -150;
+      } else if (cursors.right.isDown) {
+        player.body.velocity.x = 150;
+      } else {
+        player.body.velocity.x = 0;
+      }
+    }
+  </script>
+</body>
+
+</html>
